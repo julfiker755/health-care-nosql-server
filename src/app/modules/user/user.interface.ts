@@ -1,6 +1,7 @@
+import { useRole, userStatus } from "./user.constants"
 
-export type Trole = 'super_admin' | 'admin' | 'doctor' | 'patient'
-export type TuserStatus ='active'| 'bocked' | 'deleted'
+export type Trole = typeof useRole[number]
+export type TuserStatus = typeof userStatus[number]
 
 export type Tuser ={
   id:string,

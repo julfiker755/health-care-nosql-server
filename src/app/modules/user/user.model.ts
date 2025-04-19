@@ -1,5 +1,6 @@
 import { Schema, model} from 'mongoose';
 import { Tuser } from './user.interface';
+import { useRole, userStatus } from './user.constants';
 
 const userSchema = new Schema<Tuser>(
   {
@@ -8,11 +9,11 @@ const userSchema = new Schema<Tuser>(
     password: { type: String, required: true },
     role: {
       type: String,
-      enum: ['admin', 'student', 'faculty'],
+      enum:useRole,
     },
     status: {
       type: String,
-      enum: ['active', 'blocked', 'deleted'],
+      enum:userStatus,
       default: 'active', 
     },
     needsPasswordChange: { type: Boolean, default: false },

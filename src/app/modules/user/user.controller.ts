@@ -1,48 +1,45 @@
 import { Request, Response } from 'express';
-import { userService } from './user.service';
 import catchAsync from '../../shared/catchAsync';
 import sendResponse from '../../shared/sendResponse';
 import httpStatus from 'http-status';
+import { authService } from './user.service';
+import config from '../../config';
 
 
-const createStudent = catchAsync(async (req: Request, res: Response) => {
-  const { password, student: studentData } = req.body;
-  const result = await userService.createStudentBD(req.file,password, studentData);
+const loginUser = catchAsync(async (req: Request, res: Response) => {
+  const result = await authService.loginUserBD(req.body)
+  const {refreshToken,accessToken,needsPasswordChange}=result
+  res.cookie('accessToken', accessToken, {
+    secure: config.node_env  === 'production',
+    httpOnly: true,
+    sameSite: 'none',
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+  });
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Student is created succesfully',
+    message: 'User Login  succesfully',
+    data: {
+      refreshToken,
+      needsPasswordChange,
+    },
+  });
+});
+
+const ChangePassword = catchAsync(async (req: Request, res: Response) => {
+  const result = await authService.ChangePasswordDB(req.user.jwtPaylod,req.body)
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Password change  succesfully',
     data: result,
   });
 });
 
 
-const createAdmin = catchAsync(async (req: Request, res: Response) => {
-  const { password, admin:adminData } = req.body;
-  const result = await userService.createAdminIntoDB(password,adminData);
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Admin is created succesfully',
-    data: result,
-  });
-});
 
 
-const createFaculty = catchAsync(async (req: Request, res: Response) => {
-  const { password, faculty:facultyData } = req.body;
-  const result = await userService.createFacultyIntoDB(password,facultyData)
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Faculty is created succesfully',
-    data: result,
-  });
-});
-
-
-export const userController = {
-  createStudent,
-  createAdmin,
-  createFaculty 
+export const authController = {
+  loginUser,
+  ChangePassword
 };

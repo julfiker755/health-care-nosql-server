@@ -1,25 +1,13 @@
-import { Model } from 'mongoose';
 
-export type UserRole = 'admin' | 'student' | 'faculty';
+export type Trole = 'super_admin' | 'admin' | 'doctor' | 'patient'
+export type TuserStatus ='active'| 'bocked' | 'deleted'
 
-export interface TUser {
-  id: string;
-  password: string;
-  needsPasswordChange: boolean;
-  role: UserRole;
-  status: 'in-progress' | 'blocked';
-  passwordChangedAt?: Date;
-  isDeleted: boolean;
-}
-
-export interface UserModels extends Model<TUser> {
-  isUserExistsByCustomId(id: string): Promise<TUser>;
-  isPasswordMatched(
-    plainTextPassword: string,
-    hashedPassword: string,
-  ): Promise<boolean>;
-  isJWTIssuedBeforePasswordChanged(
-    passwordChangedTimestamp: Date,
-    jwtIssuedTimestamp: number,
-  ): Promise<boolean>;
+export type Tuser ={
+  id:string,
+  email:string,
+  password:string,
+  role:Trole,
+  status:TuserStatus,
+  needsPasswordChange?:boolean,
+  isDeleted?:boolean
 }

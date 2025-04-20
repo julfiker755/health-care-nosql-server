@@ -2,8 +2,14 @@ import mongoose from 'mongoose';
 import { adminModel } from './admin.model';
 import { userRole } from '../user/user.constants';
 import { userModel } from '../user/user.model';
+import ApiError from '../../errors/apiError';
 
 
+const adminGetBD=()=>{
+  throw new ApiError(404,"Julfiker")
+}
+
+// adminStoreBD
 const adminStoreBD = async (payload: any) => {
   const { email, password, ...others } = payload;
 
@@ -17,19 +23,19 @@ const adminStoreBD = async (payload: any) => {
     ...others,
   }
 
+
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
     // Transaction-1
-    const user = await userModel.create([userPayload], { session });
+    const [user] = await userModel.create([userPayload], { session });
     // Transaction-2    
-    Object.assign(adminPayload, { id: user[0]?._id });
-    console.log(adminPayload)
-    const admin = await adminModel.create([adminPayload], { session });
+    Object.assign(adminPayload, { id: user._id });
+    const [admin]= await adminModel.create([adminPayload], { session });
     // end transaction
     await session.commitTransaction();
     session.endSession();
-    return admin[0];
+    return admin;
   } catch(err:any) {
     await session.abortTransaction(); 
     session.endSession();
@@ -40,4 +46,5 @@ const adminStoreBD = async (payload: any) => {
 
 export const adminService = {
   adminStoreBD,
+  adminGetBD
 };

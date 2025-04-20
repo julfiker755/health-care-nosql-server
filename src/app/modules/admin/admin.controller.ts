@@ -6,6 +6,16 @@ import httpStatus from 'http-status';
 
 
 
+const adminGetBD = catchAsync(async (req: Request, res: Response) => {
+    const result = await adminService.adminGetBD()
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'admin Info succesfully',
+      data: result,
+    });
+  });
+  
 const adminStoreBD = catchAsync(async (req: Request, res: Response) => {
     const result = await adminService.adminStoreBD(req.body);
     sendResponse(res, {
@@ -18,5 +28,6 @@ const adminStoreBD = catchAsync(async (req: Request, res: Response) => {
   
   
   export const adminController = {
-    adminStoreBD
+    adminStoreBD,
+    adminGetBD
   };

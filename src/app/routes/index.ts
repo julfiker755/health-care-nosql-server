@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { authRoutes } from '../modules/user/auth.route';
+// import { authRoutes } from '../modules/user/auth.route';
+import { adminRoutes } from '../modules/admin/admin.route';
 
 const router = Router();
 
-const moduleRoues = [
- {
-    path:"/user",
-    route:authRoutes
+const moduleRoues = [{
+    path:'/admin',
+    route:adminRoutes
   }
 ];
 

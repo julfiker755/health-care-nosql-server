@@ -1,10 +1,9 @@
-import { useRole, userStatus } from "./user.constants"
+import { userRole, userStatus } from "./user.constants"
 
-export type Trole = typeof useRole[number]
+export type Trole = typeof userRole[number]
 export type TuserStatus = typeof userStatus[number]
 
 export type Tuser ={
-  id:string,
   email:string,
   password:string,
   role:Trole,

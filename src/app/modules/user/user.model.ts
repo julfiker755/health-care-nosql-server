@@ -1,20 +1,19 @@
-import { Schema, model} from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { Tuser } from './user.interface';
-import { useRole, userStatus } from './user.constants';
+import { userRole, userStatus } from './user.constants';
 
 const userSchema = new Schema<Tuser>(
   {
-    id: { type: String, required: true },
-    email: { type: String,unique:true, required: true },
+    email: { type: String, unique: true, required:[ true,"Email is required"] },
     password: { type: String, required: true },
     role: {
       type: String,
-      enum:useRole,
+      enum: userRole,
     },
     status: {
       type: String,
-      enum:userStatus,
-      default: 'active', 
+      enum: userStatus,
+      default: 'active',
     },
     needsPasswordChange: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
@@ -25,3 +24,4 @@ const userSchema = new Schema<Tuser>(
 );
 
 export const userModel = model<Tuser>('user', userSchema);
+

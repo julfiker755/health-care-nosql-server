@@ -3,7 +3,8 @@ import httpStatus from "http-status";
 
 
 const hanldeValidationError=(err:mongoose.Error.ValidationError)=>{
-    const  errorSources=Object.values(err.errors).map((val:any)=>{
+    console.log(err);
+    const  error=Object.values(err.errors).map((val:any)=>{
         return {
             path:val?.path,
             message:val?.message
@@ -12,7 +13,7 @@ const hanldeValidationError=(err:mongoose.Error.ValidationError)=>{
     return {
         statusCode:httpStatus.BAD_REQUEST,
         message:"Validation Error",
-        errorSources,
+        error,
     }
 }
 

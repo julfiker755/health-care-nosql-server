@@ -1,11 +1,11 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 import { Tadmin } from "./admin.interface";
 import { gender } from "./admin.constants";
 
 
 
 const adminSchema=new Schema<Tadmin>({
-    id:{type:String,required:true},
+    id:{type: mongoose.Schema.Types.ObjectId,required:true,ref: 'user'},
     name:{type:String,required:true},
     email:{type:String,required:true,unique:true},
     photo:{type:String},

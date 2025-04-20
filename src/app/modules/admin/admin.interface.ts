@@ -1,8 +1,9 @@
+import { Types } from 'mongoose';
 import { gender } from './admin.constants';
 
 export type Tgender = typeof gender[number];
 export type Tadmin = {
-  id: string;
+  id:Types.ObjectId;
   name: string;
   email: string;
   photo?: string;

@@ -2,11 +2,12 @@ import mongoose from 'mongoose';
 import { adminModel } from './admin.model';
 import { userRole } from '../user/user.constants';
 import { userModel } from '../user/user.model';
-import ApiError from '../../errors/apiError';
 
 
-const adminGetBD=()=>{
-  throw new ApiError(404,"Julfiker")
+
+const adminGetBD=async()=>{
+  const result=await adminModel.find().populate('user')
+  return result
 }
 
 // adminStoreBD
@@ -38,9 +39,7 @@ const adminStoreBD = async (payload: any) => {
     return admin;
   } catch(err:any) {
     await session.abortTransaction(); 
-    session.endSession();
     throw new Error(err.message || 'Transaction failed');
-  
   }
 };
 

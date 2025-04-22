@@ -6,7 +6,7 @@ import { userModel } from '../user/user.model';
 
 
 const adminGetBD=async()=>{
-  const result=await adminModel.find().populate('user')
+  const result=await adminModel.find().populate('admin')
   return result
 }
 
@@ -31,7 +31,7 @@ const adminStoreBD = async (payload: any) => {
     // Transaction-1
     const [user] = await userModel.create([userPayload], { session });
     // Transaction-2    
-    Object.assign(adminPayload, { id: user._id });
+    Object.assign(adminPayload, { admin: user._id });
     const [admin]= await adminModel.create([adminPayload], { session });
     // end transaction
     await session.commitTransaction();

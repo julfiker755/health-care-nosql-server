@@ -1,65 +1,54 @@
-// import config from '../../config';
-// import ApiError from '../../errors/apiError';
-// import { userModel } from '../user/user.model';
-// import  bcrypt from 'bcrypt'
-// import httpStatus from 'http-status';
-// import { createToken } from './user.utils';
+import { jwtHelpers } from '../../../helpers/jwtHelpers';
+import { BcryptCompare, BcryptStore } from '../../../ulits';
+import config from '../../config';
+import ApiCustomError from '../../errors/apiCustomError';
+import { userModel } from './user.model';
 
-// const loginUserBD = async (payload: any) => {
-//   // checking if user is exist
-//   const userInfo = await userModel.isUserExistsByCustomId(payload.id);
-//   if (!userInfo) {
-//     throw new ApiError(httpStatus.NOT_FOUND, 'This User is not found');
-//   }
-//   // checking if user deleted
-//   if (userInfo?.isDeleted) {
-//     throw new ApiError(httpStatus.FORBIDDEN, 'The User  Deleted Account');
-//   }
-//   // checking if user blocked account
-//   if (userInfo?.status === 'blocked') {
-//     throw new ApiError(httpStatus.FORBIDDEN, 'The User blocked Account');
-//   }
-//   // checking if the password is correct
-//   if (
-//     !(await userModel.isPasswordMatched(payload?.password, userInfo.password))
-//   ) {
-//     throw new ApiError(httpStatus.FORBIDDEN, 'Password dot not matched');
-//   }
+const loginUserBD = async (payload: any) => {
+    const {email, password} = payload;
+  const result = await userModel.findOne({ email:email });
+  if (!result) {
+    throw new ApiCustomError('user email Error', [
+      {
+        field: 'email',
+        code: 'invalid_type',
+        message: 'User not found',
+      },
+    ]);
+  }
+  if(password){
+    const passwordMatch = await BcryptCompare(password, result?.password);
+    if(!passwordMatch){
+      throw new ApiCustomError('user password Error', [
+        {
+          field: 'password',
+          code: 'invalid_type',
+          message: 'User password not match',
+        },
+      ]);  
+    }
+  }
+  const payloadData = {
+    email: result?.email,
+    role: result?.role,
+  };
+  const accessToken = jwtHelpers.generateToken(
+    payloadData,
+    config.jwt.secret,
+    config.jwt.accessTokenExp,
+  );
+  const refreshToken = jwtHelpers.generateToken(
+    payloadData,
+    config.jwt.secret,
+    config.jwt.refreshTokenExp,
+  );
 
-//   const jwtPaylod = {
-//     id: userInfo.id,
-//     role: userInfo.role,
-//   };
-//   //  create token and sent to the client
-//   return {
-
-//     needsPasswordChange: userInfo?.needsPasswordChange,
-//   };
-// };
-
-// // changePasswordDB
-// const ChangePasswordDB = async (user: any, payload: any) => {
-//   console.log(user,payload)
-//   const userInfo = await userModel.isUserExistsByCustomId(user.id);
-//   if (
-//     !(await userModel.isPasswordMatched(payload?.oldPassword, userInfo.password))
-//   ) {
-//     throw new ApiError(httpStatus.FORBIDDEN, 'Password dot not matched');
-//   }
-  
-//   const newHastPassword=await bcrypt.hash(payload.newPassword, 10);
-//   const result = await userModel.findOneAndUpdate({
-//     id: user.id,
-//     role: user.role,
-//   },{
-//     password:newHastPassword,
-//     needsPasswordChange:false,
-//     passwordChangedAt:new Date()
-//   });
-//   return  result
-// };
-
-// export const authService = {
-//   loginUserBD,
-//   ChangePasswordDB,
-// };
+  return {
+    accessToken,
+    refreshToken,
+    needsPasswordChange: result?.needsPasswordChange,
+  };
+};
+export const userService = {
+  loginUserBD,
+};

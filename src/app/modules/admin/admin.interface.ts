@@ -3,7 +3,6 @@ import { gender } from './admin.constants';
 
 export type Tgender = typeof gender[number];
 export type Tadmin = {
-  id:Types.ObjectId;
   name: string;
   email: string;
   photo?: string;
@@ -11,4 +10,5 @@ export type Tadmin = {
   gender: Tgender;
   contactNumber: string;
   isDeleted?: boolean;
+  admin:Types.ObjectId;
 };

@@ -1,18 +1,17 @@
-// import express from 'express';
-// import ValidateRequest from '../../middleware/validateRequest';
-// import { authValidation } from './user.vallidation';
-// import { authController } from './user.controller';
-// import auth from '../../middleware/auth';
-// import { USER_ROLE } from '../user/user.constant';
-
-// const router = express.Router();
+import express from 'express';
+import ValidateRequest from '../../middleware/validateRequest';
+import auth from '../../middleware/auth';
+import { userController } from './user.controller';
 
 
-// router.post(
-//   '/login',
+const router = express.Router();
+
+
+router.post(
+  '/login',
 //   ValidateRequest(authValidation.loginSchema),
-//   authController.loginUser
-// );
+  userController.loginUser
+);
 // router.post(
 //   '/change-password',
 //   auth(USER_ROLE.admin,USER_ROLE.faculty,USER_ROLE.student),
@@ -20,4 +19,4 @@
 //   authController.ChangePassword
 // );
 
-// export const authRoutes = router;
+export const userRoutes = router;

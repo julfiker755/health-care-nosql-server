@@ -5,7 +5,6 @@ import { gender } from "./admin.constants";
 
 
 const adminSchema=new Schema<Tadmin>({
-    id:{type: mongoose.Schema.Types.ObjectId,required:true,ref: 'user'},
     name:{type:String,required:true},
     email:{type:String,required:true,unique:true},
     photo:{type:String},
@@ -13,6 +12,7 @@ const adminSchema=new Schema<Tadmin>({
     gender:{type:String,enum:gender,required:true},
     contactNumber:{type:String,required:true},
     isDeleted:{type:Boolean,default:false},
+    admin:{type: mongoose.Schema.Types.ObjectId,required:true,ref: 'user'},
 },{
     timestamps:true,
 }

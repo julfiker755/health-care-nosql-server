@@ -1,13 +1,10 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
-import { ZodError } from 'zod';
 import { TErrorSource } from '../interface/error';
-import config from '../config';
-import handleZodError from './handlezodError';
-import hanldeValidationError from './handlevalidation';
-import hanldeCastError from './hanldeCastError';
-import hanldeDuplicateError from './hanldeDuplicateError';
+import ApiCustomError from './apiCustomError';
+import { hanlde } from './handleErrors';
 import ApiError from './apiError';
-import mongoose from 'mongoose';
+import { ZodError } from 'zod';
+
 
 const globalErrorHandler: ErrorRequestHandler = (
   err: any,
@@ -17,57 +14,39 @@ const globalErrorHandler: ErrorRequestHandler = (
 ): any => {
   let statusCode = 500;
   let message = err.message || 'Something went Wrong!';
-  let errors: TErrorSource = [
-    {
-      path: '',
-      message: 'Something went wrong',
-    },
-  ];
-
-  // if(err instanceof mongoose.Error.ValidationError){
-  //    console.log("show errro")
-  // }
-
+  let errors: TErrorSource = hanlde.Errors
+  // errors hanlde
   if (err instanceof ZodError) {
-    const simplifiedError = handleZodError(err);
-    statusCode = simplifiedError.statusCode;
-    message = simplifiedError.message;
-    errors = simplifiedError.error;
+    const result = hanlde.ZodErrors(err)
+    statusCode = result.statusCode;
+    message = result.message;
+    errors = result.error;
   } else if (err?.name === 'ValidationError') {
-    const simplifiedError = hanldeValidationError(err);
-    statusCode = simplifiedError.statusCode;
-    message = simplifiedError.message;
-    errors = simplifiedError.error;
+    const handle =hanlde.ValidationError(err)
+    statusCode = handle.statusCode;
+    message = handle.message;
+    errors = handle.error;
   } else if (err.code === 11000) {
-    const simplifiedError = hanldeDuplicateError(err);
-    statusCode = simplifiedError.statusCode;
-    message = simplifiedError.message;
-    errors = simplifiedError.error;
+    const result =hanlde.DuplicateError(err)
+    statusCode = result.statusCode;
+    message = result.message;
+    errors = result.error;
+  } else if (err instanceof ApiError) {
+    const result = hanlde.ApiError(err);
+    statusCode = result.statusCode;
+    message = result.message;
+    errors = result.errorSources;
+  } else if (err instanceof ApiCustomError) {
+    const result = hanlde.CustomError(err);
+    statusCode = result.statusCode;
+    message = result.message;
+    errors = result.errorSources;
+  } else if (err instanceof Error) {
+    const result = hanlde.Error(err);
+    statusCode = result.statusCode;
+    message = result.message;
+    errors = result.errorSources;
   }
-
-//   else if(err.name === "CastError"){
-//       const simplifiedError= hanldeCastError(err)
-//       statusCode = simplifiedError.statusCode;
-//       message = simplifiedError.message;
-//       errors = simplifiedError.errors;
-//   }
-  else if (err instanceof ApiError) {
-    statusCode = err.statusCode;
-    message = err.message;
-    errors = [
-      {
-        path: '',
-        message: err.message,
-      },
-    ];
-  }
-  // else if(err instanceof Error){
-  //     message = err.message;
-  //     errors = [{
-  //         path:'',
-  //         message:err.message
-  //     }]
-  // }
 
   return res.status(statusCode).json({
     success: false,

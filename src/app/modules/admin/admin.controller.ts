@@ -11,7 +11,7 @@ const adminGetBD = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'admin Info succesfully',
+      message: 'Admin Info succesfully',
       data: result,
     });
   });
@@ -21,7 +21,40 @@ const adminStoreBD = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'admin store succesfully',
+      message: 'Admin store succesfully',
+      data: result,
+    });
+  });
+  
+const adminGetByIdBD = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await adminService.adminGetByIdBD(id)
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Admin Single succesfully',
+      data: result,
+    });
+  });
+
+const adminUpdate = catchAsync(async (req: Request & {user:any}, res: Response) => {
+    const user=req.user
+    const result = await adminService.adminUpdateByIdBD(req.body,user)
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Admin Update succesfully',
+      data: result,
+    });
+  });
+
+const adminDelete = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await adminService.adminDeleteByIdBD(id)
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Admin Delete succesfully',
       data: result,
     });
   });
@@ -29,5 +62,8 @@ const adminStoreBD = catchAsync(async (req: Request, res: Response) => {
   
   export const adminController = {
     adminStoreBD,
-    adminGetBD
+    adminGetBD,
+    adminGetByIdBD,
+    adminUpdate,
+    adminDelete
   };

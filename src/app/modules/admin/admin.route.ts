@@ -2,23 +2,23 @@ import express from 'express';
 import { adminController } from './admin.controller';
 import ValidateRequest from '../../middleware/validateRequest';
 import { adminValidation } from './admin.validation';
+import auth from '../../middleware/auth';
+import { Role } from '../user/user.constants';
 const router = express.Router();
 
-
-router.get(
-  '/',
-  adminController.adminGetBD
-);
+router.get('/', auth(Role.super_admin, Role.admin), adminController.adminGetBD);
 router.post(
   '/store',
+  auth(Role.super_admin),
   ValidateRequest(adminValidation.adminSchema),
-  adminController.adminStoreBD
+  adminController.adminStoreBD,
 );
-// router.post(
-//   '/change-password',
-//   auth(USER_ROLE.admin,USER_ROLE.faculty,USER_ROLE.student),
-//   ValidateRequest(authValidation.changePasswordSchema),
-//   authController.ChangePassword
-// );
+router.get('/:id', adminController.adminGetByIdBD);
+router.put(
+  '/update',
+  auth(Role.super_admin, Role.admin),
+  adminController.adminUpdate,
+);
+router.delete('/:id', auth(Role.super_admin), adminController.adminDelete);
 
 export const adminRoutes = router;

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { adminModel } from './admin.model';
-import { userRole } from '../user/user.constants';
+import { Role} from '../user/user.constants';
 import { userModel } from '../user/user.model';
 import { Tadmin } from './admin.interface';
 
@@ -16,7 +16,7 @@ const adminStoreBD = async (payload: any) => {
   const userPayload = {
     email: email,
     password: password,
-    role: userRole[1],
+    role:Role.admin,
   };
   const adminPayload = {
     email: email,

@@ -9,7 +9,6 @@ const router = express.Router();
 router.get('/', auth(Role.super_admin, Role.admin), adminController.adminGetBD);
 router.post(
   '/store',
-  auth(Role.super_admin),
   ValidateRequest(adminValidation.adminSchema),
   adminController.adminStoreBD,
 );

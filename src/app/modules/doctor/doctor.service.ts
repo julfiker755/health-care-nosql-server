@@ -47,7 +47,6 @@ const doctorGetByIdBD = async (id: string) => {
   
   const doctorUpdateByIdBD = async (payload: Partial<Tdoctor>,user:any) => {
     const doctorInfo=await doctorModel.findOne({email:user.email})
-    console.log(user)
     if(!doctorInfo) throw new Error('Doctor not found')
     const result = await doctorModel.findByIdAndUpdate(doctorInfo._id, payload, {
       new: true,

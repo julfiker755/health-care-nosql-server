@@ -1,8 +1,23 @@
 import { jwtHelpers } from '../../../helpers/jwtHelpers';
-import { BcryptCompare, BcryptStore } from '../../../ulits';
+import { BcryptCompare} from '../../../ulits';
+import QueryBuilder from '../../builder/queryBuilder';
 import config from '../../config';
 import ApiCustomError from '../../errors/apiCustomError';
 import { userModel } from './user.model';
+
+
+const UserGetBD = async (query: Record<string, unknown>) => {
+  const userQuery = new QueryBuilder(userModel.find(), query)
+    .filter()
+    .paginate()
+    .sort();
+  const result = await userQuery.modelQuery;
+  const meta = await userQuery.countTotal();
+  return {
+    result,
+    meta,
+  };
+};
 
 const loginUserBD = async (payload: any) => {
     const {email, password} = payload;
@@ -50,5 +65,6 @@ const loginUserBD = async (payload: any) => {
   };
 };
 export const userService = {
+  UserGetBD,
   loginUserBD,
 };

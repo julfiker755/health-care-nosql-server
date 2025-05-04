@@ -7,6 +7,18 @@ import { userService } from './user.service';
 
 
 
+const UserGetBD= catchAsync(async (req: Request, res: Response) => {
+  const results= await userService.UserGetBD(req.query)
+  const {result,meta}:any=results
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User Info succesfully',
+    meta:meta,
+    data: result,
+  });
+});
+
 const loginUser= catchAsync(async (req: Request, res: Response) => {
   const result = await userService.loginUserBD(req.body)
   const {refreshToken,accessToken,needsPasswordChange}=result
@@ -27,19 +39,8 @@ const loginUser= catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// const ChangePassword = catchAsync(async (req: Request, res: Response) => {
-//   const result = await authService.ChangePasswordDB(req.user.jwtPaylod,req.body)
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Password change  succesfully',
-//     data: result,
-//   });
-// });
-
-
-
 
 export const userController = {
+  UserGetBD,
   loginUser
 };

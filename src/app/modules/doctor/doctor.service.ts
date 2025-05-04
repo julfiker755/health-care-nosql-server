@@ -3,11 +3,23 @@ import { Role } from "../user/user.constants";
 import { userModel } from "../user/user.model";
 import { doctorModel } from "./doctor.model";
 import { Tdoctor } from "./doctor.interface";
+import QueryBuilder from "../../builder/queryBuilder";
+import { searchFileds } from "../admin/admin.constants";
 
 
-const doctorGetBD = async () => {
-  const result = await doctorModel.find().populate('doctor');
-  return result;
+const doctorGetBD = async (query: Record<string, unknown>) => {
+  const doctorQuery = new QueryBuilder(doctorModel.find(), query)
+  .search(searchFileds)
+  .filter()
+  .paginate()
+  .sort();
+const result = await doctorQuery.modelQuery;
+const meta = await doctorQuery.countTotal();
+return {
+  result,
+  meta,
+};
+
 }
 
 

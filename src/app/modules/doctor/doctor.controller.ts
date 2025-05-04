@@ -6,12 +6,14 @@ import httpStatus from 'http-status';
 
 
 const doctorGetBD = catchAsync(async (req: Request, res: Response) => {
-    const result = await doctorService.doctorGetBD()
+    const results = await doctorService.doctorGetBD(req.query)
+    const {result,meta}:any=results
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
       message: 'Doctor Info succesfully',
-      data: result,
+      meta:meta,
+      data:result,
     });
   });
 const dcotorStoreBD = catchAsync(async (req: Request, res: Response) => {

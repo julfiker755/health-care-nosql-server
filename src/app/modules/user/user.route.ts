@@ -6,10 +6,12 @@ import { userController } from './user.controller';
 
 const router = express.Router();
 
-
+router.get(
+  '/',
+  userController.UserGetBD
+);
 router.post(
   '/login',
-//   ValidateRequest(authValidation.loginSchema),
   userController.loginUser
 );
 // router.post(

@@ -6,11 +6,13 @@ import httpStatus from 'http-status';
 
 
 const patientGetBD = catchAsync(async (req: Request, res: Response) => {
-    const result = await patientService.patientGetBD()
+    const results= await patientService.patientGetBD(req.query)
+    const {result,meta}:any=results
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
       message: 'Patient Info succesfully',
+      meta:meta,
       data: result,
     });
   });

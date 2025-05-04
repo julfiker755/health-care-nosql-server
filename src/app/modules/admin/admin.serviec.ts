@@ -1,12 +1,23 @@
 import mongoose from 'mongoose';
 import { adminModel } from './admin.model';
-import { Role} from '../user/user.constants';
+import { Role } from '../user/user.constants';
 import { userModel } from '../user/user.model';
 import { Tadmin } from './admin.interface';
+import QueryBuilder from '../../builder/queryBuilder';
+import { searchFileds } from './admin.constants';
 
-const adminGetBD = async () => {
-  const result = await adminModel.find().populate('admin');
-  return result;
+const adminGetBD = async (query: Record<string, unknown>) => {
+  const adminQuery = new QueryBuilder(adminModel.find(), query)
+    .search(searchFileds)
+    .filter()
+    .paginate()
+    .sort();
+  const result = await adminQuery.modelQuery;
+  const meta = await adminQuery.countTotal();
+  return {
+    result,
+    meta,
+  };
 };
 
 // adminStoreBD
@@ -16,7 +27,7 @@ const adminStoreBD = async (payload: any) => {
   const userPayload = {
     email: email,
     password: password,
-    role:Role.admin,
+    role: Role.admin,
   };
   const adminPayload = {
     email: email,
@@ -46,17 +57,14 @@ const adminGetByIdBD = async (id: string) => {
   return result;
 };
 
-const adminUpdateByIdBD = async (payload: Partial<Tadmin>,user:any) => {
-  const adminInfo=await adminModel.findOne({email:user.email})
-  if(!adminInfo) throw new Error('Admin not found')
+const adminUpdateByIdBD = async (payload: Partial<Tadmin>, user: any) => {
+  const adminInfo = await adminModel.findOne({ email: user.email });
+  if (!adminInfo) throw new Error('Admin not found');
   const result = await adminModel.findByIdAndUpdate(adminInfo._id, payload, {
     new: true,
   });
   return result;
 };
-
-
-
 
 const adminDeleteByIdBD = async (id: string) => {
   const session = await mongoose.startSession();
@@ -65,7 +73,7 @@ const adminDeleteByIdBD = async (id: string) => {
     // Transaction-1: Delete the admin
     const admin = await adminModel.findByIdAndDelete(id, { session });
     if (!admin) throw new Error('Admin not found');
-    const userID=admin.admin
+    const userID = admin.admin;
     // Transaction-2: Delete the related user (using admin.admin field)
     const user = await userModel.findByIdAndDelete(userID, { session });
     if (!user) throw new Error('Admin not found');
@@ -85,5 +93,5 @@ export const adminService = {
   adminGetBD,
   adminGetByIdBD,
   adminUpdateByIdBD,
-  adminDeleteByIdBD
+  adminDeleteByIdBD,
 };

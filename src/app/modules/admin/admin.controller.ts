@@ -7,11 +7,13 @@ import httpStatus from 'http-status';
 
 
 const adminGetBD = catchAsync(async (req: Request, res: Response) => {
-    const result = await adminService.adminGetBD()
+    const results = await adminService.adminGetBD(req.query)
+    const {result,meta}:any=results
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
       message: 'Admin Info succesfully',
+      meta:meta,
       data: result,
     });
   });
@@ -55,7 +57,7 @@ const adminDelete = catchAsync(async (req: Request, res: Response) => {
       statusCode: httpStatus.OK,
       success: true,
       message: 'Admin Delete succesfully',
-      data: result,
+      data:result,
     });
   });
   

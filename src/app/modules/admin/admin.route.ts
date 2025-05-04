@@ -6,7 +6,7 @@ import auth from '../../middleware/auth';
 import { Role } from '../user/user.constants';
 const router = express.Router();
 
-router.get('/', auth(Role.super_admin, Role.admin), adminController.adminGetBD);
+router.get('/', adminController.adminGetBD);
 router.post(
   '/store',
   ValidateRequest(adminValidation.adminSchema),
